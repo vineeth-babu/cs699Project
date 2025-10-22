@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="product-detail">
+    <a href="{{ url_for('lost_found') }}" class="back-link">← Back to Lost & Found</a>
+    
+    <div class="detail-container">
+        <div>
+            {% if item.image %}
+            <img src="{{ item.image }}" alt="{{ item.item }}" class="detail-image">
+            {% else %}
+            <div class="detail-image" style="display: flex; align-items: center; justify-content: center; background: #fff3e0; color: #ff9800; font-size: 5rem;">
+                {% if item.status == 'Lost' %}❓{% else %}✓{% endif %}
+            </div>
+            {% endif %}
+        </div>
+        
+        <div class="detail-info">
+            <h3>{{ item.item }}</h3>
+            {% if item.status == 'Lost' %}
+            <span class="status-lost" style="font-size: 1.2rem; padding: 8px 20px;">{{ item.status }}</span>
+            {% else %}
+            <span class="status-found" style="font-size: 1.2rem; padding: 8px 20px;">{{ item.status }}</span>
+            {% endif %}
+            
+            <div class="detail-section" style="margin-top: 20px;">
+                <h4>Description</h4>
+                <p>{{ item.description }}</p>
+            </div>
+            
+            <div class="seller-info">
+                <h4>Contact Information</h4>
+                <p><strong>Phone:</strong> {{ item.contact }}</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

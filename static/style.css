@@ -1,0 +1,295 @@
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Poppins', sans-serif;
+    background-color: #f0f4f8;
+    min-height: 100vh;
+    padding: 20px;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* Header Styles */
+header {
+    background: #4a90e2;
+    padding: 25px 40px;
+    color: white;
+    border-radius: 12px 12px 0 0;
+}
+
+header h1 a {
+    color: white;
+    text-decoration: none;
+    font-size: 2.2rem;
+    font-weight: 600;
+}
+
+nav {
+    display: flex;
+    gap: 25px;
+}
+
+nav a {
+    color: white;
+    text-decoration: none;
+    font-weight: 400;
+    font-size: 1rem;
+    padding: 8px 15px;
+    border-radius: 6px;
+    transition: all 0.3s;
+}
+
+nav a:hover {
+    background: white;
+    color: #4a90e2;
+}
+
+/* Main Content */
+main {
+    padding: 40px;
+    min-height: 400px;
+}
+
+
+.product-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); 
+    gap: 25px; 
+    margin-bottom: 40px;
+}
+
+/* This is the main card/tile for each item */
+.product-card {
+    display: flex; 
+    align-items: center; 
+    background: #f8f9fa;
+    border: 1px solid #e0e6ed;
+    border-radius: 10px;
+    padding: 15px;
+    text-decoration: none; 
+    color: inherit; 
+    overflow: hidden; 
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.product-card:hover {
+    transform: translateY(-5px); 
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+}
+
+/* Styles for the product image or placeholder */
+.product-image {
+    width: 80px;
+    height: 80px;
+    border-radius: 8px;
+    object-fit: cover; 
+    flex-shrink: 0; 
+}
+
+/* Styles for the text content next to the image */
+.product-info {
+    flex-grow: 1; 
+}
+
+.product-name {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 5px;
+}
+
+.product-price {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #4a90e2;
+}
+
+/*Detail Page Styles*/
+.product-detail .back-link {
+    display: inline-block;
+    margin-bottom: 30px;
+    color: #4a90e2;
+    text-decoration: none;
+    font-weight: 600;
+    transition: color 0.3s;
+}
+
+.product-detail .back-link:hover {
+    color: #357abd;
+}
+
+.detail-container {
+    display: flex;
+    gap: 40px;
+}
+
+.detail-image {
+    width: 300px;
+    height: 300px;
+    border-radius: 12px;
+    object-fit: cover;
+    flex-shrink: 0;
+}
+
+.detail-info h3 {
+    font-size: 2.5rem;
+    color: #333;
+    margin-bottom: 15px;
+}
+
+.detail-price {
+    font-size: 2rem;
+    font-weight: 600;
+    color: #4a90e2;
+    margin-bottom: 25px;
+}
+
+.detail-section {
+    margin-top: 25px;
+}
+
+.detail-section h4 {
+    font-size: 1.2rem;
+    color: #333;
+    margin-bottom: 10px;
+    border-bottom: 2px solid #f0f4f8;
+    padding-bottom: 5px;
+}
+
+.seller-info {
+    margin-top: 25px;
+    background: #f8f9fa;
+    padding: 20px;
+    border-radius: 8px;
+}
+
+.seller-info p {
+    margin-bottom: 8px;
+}
+
+
+main h2, main h3 {
+    color: #333;
+    margin-bottom: 25px;
+    padding-bottom: 10px;
+    border-bottom: 3px solid #4a90e2;
+}
+
+/* Form Styles */
+form {
+    background: #f8f9fa;
+    padding: 30px;
+    border-radius: 10px;
+    border: 1px solid #e0e6ed;
+    max-width: 600px;
+}
+
+form label {
+    display: block;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 5px;
+}
+
+form input[type="text"],
+form input[type="password"],
+form input[type="number"],
+form input[type="email"],
+form input[type="tel"],
+form textarea,
+form select {
+    width: 100%;
+    padding: 12px 15px;
+    margin-bottom: 20px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 1rem;
+    font-family: 'Poppins', sans-serif;
+    transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+form input:focus, form textarea:focus, form select:focus {
+    outline: none;
+    border-color: #4a90e2;
+    box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.2);
+}
+
+form input[type="submit"] {
+    background: #4a90e2;
+    color: white;
+    padding: 12px 35px;
+    border: none;
+    border-radius: 6px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.3s;
+    margin-top: 10px;
+}
+
+form input[type="submit"]:hover {
+    background: #357abd;
+    transform: translateY(-2px);
+}
+
+/* Status Badges */
+.status-lost {
+    display: inline-block;
+    padding: 4px 12px;
+    background: #ff6b6b;
+    color: white;
+    border-radius: 15px;
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+.status-found {
+    display: inline-block;
+    padding: 4px 12px;
+    background: #51cf66;
+    color: white;
+    border-radius: 15px;
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+/* Home page styles */
+.home-links {
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+    margin-top: 40px;
+}
+
+.home-links a {
+    display: block;
+    padding: 35px 50px;
+    background: #4a90e2; 
+    color: white; 
+    text-decoration: none;
+    font-size: 1.4rem;
+    font-weight: 600;
+    text-align: center;
+    border-radius: 10px; 
+    border: 3px solid #4a90e2;
+    transition: all 0.3s ease; 
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15); 
+}
+
+.home-links a:hover {
+    background: white; 
+    color: #4a90e2;
+    transform: translateY(-5px); 
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2); 
+}

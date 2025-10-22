@@ -1,6 +1,13 @@
 {% extends "base.html" %}
 {% block content %}
-<h1>Welcome to IITBay</h1>
-<a href="/buy-sell">Buy/Sell</a> | 
-<a href="/lost-found">Lost & Found</a>
+    {% if 'username' in session %}
+        <h2>Welcome back, {{ username }}!</h2>
+    {% else %}
+        <h2>Welcome to IITBay!</h2>
+    {% endif %}
+    
+    <div class="home-links">
+        <a href="{{ url_for('buy_sell') }}">Buy & Sell</a>
+        <a href="{{ url_for('lost_found') }}">Lost & Found</a>
+    </div>
 {% endblock %}

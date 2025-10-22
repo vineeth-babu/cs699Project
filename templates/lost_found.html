@@ -1,23 +1,51 @@
 {% extends "base.html" %}
 {% block content %}
-<h2>Lost & Found</h2>
-<ul>
-    {% for item in items %}
-    <li>{{ item.item }} - {{ item.status }}</li>
-    {% endfor %}
-</ul>
+    <h2>Lost & Found</h2>
 
-<h3>Report Item</h3>
-<form method="post">
-    Item Name: <input type="text" name="item"><br>
-    Description: <input type="text" name="name"><br>
-    Image: <input type="image" name="name"><br>
-    finder's contact number: <input type="text" name="name"><br>
-    Status: 
-    <select name="status">
-        <option value="Lost">Lost</option>
-        <option value="Found">Found</option>
-    </select><br>
-    <input type="submit" value="Report">
-</form>
+    <div class="product-grid">
+        {% for item in items %}
+            <a href="{{ url_for('lost_found_detail', item_id=item.id) }}" class="product-card">
+                 {% if item.image %}
+                    <img src="{{ item.image }}" alt="{{ item.item }}" class="product-image">
+                {% else %}
+                    <div class="product-image" style="display: flex; align-items: center; justify-content: center; font-size: 2rem; background-color: {% if item.status == 'Lost' %}#fff3e0{% else %}#e8f5e9{% endif %};">
+                       {% if item.status == 'Lost' %}❓{% else %}✓{% endif %}
+                    </div>
+                {% endif %}
+                <div class="product-info">
+                    <div class="product-name">{{ item.item }}</div>
+                    {% if item.status == 'Lost' %}
+                        <span class="status-lost">{{ item.status }}</span>
+                    {% else %}
+                        <span class="status-found">{{ item.status }}</span>
+                    {% endif %}
+                </div>
+            </a>
+        {% else %}
+            <p>No items reported yet. Report an item below.</p>
+        {% endfor %}
+    </div>
+
+    <h3>Report an Item</h3>
+    <form method="post">
+        <label for="item">Item Name:</label>
+        <input type="text" id="item" name="item" required>
+
+        <label for="description">Description:</label>
+        <textarea id="description" name="description" rows="3"></textarea>
+        
+        <label for="image">Image URL:</label>
+        <input type="text" id="image" name="image">
+
+        <label for="contact">Your Contact Number:</label>
+        <input type="tel" id="contact" name="contact" required>
+
+        <label for="status">Status:</label>
+        <select id="status" name="status">
+            <option value="Lost">I Lost this item</option>
+            <option value="Found">I Found this item</option>
+        </select>
+
+        <input type="submit" value="Report Item">
+    </form>
 {% endblock %}

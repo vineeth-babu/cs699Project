@@ -1,3 +1,4 @@
+# app.py
 from flask import Flask, render_template, request, redirect, url_for, session, g
 import sqlite3
 import os
@@ -36,29 +37,29 @@ def init_db():
             )
         """)
 
-        # Buy & Sell table
+        # MODIFIED: Renamed image_url to image and contact_number to contact for consistency
         cursor.execute("""
             CREATE TABLE IF NOT EXISTS buy_sell_items (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 name TEXT NOT NULL,
                 description TEXT,
                 price REAL NOT NULL,
-                image_url TEXT,
+                image TEXT,
                 seller_name TEXT,
                 roll_number TEXT,
-                contact_number TEXT,
+                contact TEXT,
                 email TEXT
             )
         """)
 
-        # Lost & Found table
+        # MODIFIED: Renamed image_url to image and finder_contact to contact for consistency
         cursor.execute("""
             CREATE TABLE IF NOT EXISTS lost_found_items (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 item TEXT NOT NULL,
                 description TEXT,
-                image_url TEXT,
-                finder_contact TEXT,
+                image TEXT,
+                contact TEXT,
                 status TEXT NOT NULL
             )
         """)
@@ -67,6 +68,8 @@ def init_db():
 # -------------------- ROUTES --------------------
 @app.route('/')
 def home():
+    if 'username' in session:
+        return render_template('home.html', username=session['username'])
     return render_template('home.html')
 
 # -------------------- REGISTER --------------------
@@ -122,22 +125,34 @@ def buy_sell():
         name = request.form['name']
         description = request.form.get('description')
         price = request.form['price']
-        image_url = request.form.get('image_url')
+        image = request.form.get('image') # MODIFIED
         seller_name = request.form.get('seller_name')
         roll_number = request.form.get('roll_number')
-        contact_number = request.form.get('contact_number')
+        contact = request.form.get('contact') # MODIFIED
         email = request.form.get('email')
 
         db.execute("""
             INSERT INTO buy_sell_items
-            (name, description, price, image_url, seller_name, roll_number, contact_number, email)
+            (name, description, price, image, seller_name, roll_number, contact, email)
             VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-        """, (name, description, price, image_url, seller_name, roll_number, contact_number, email))
+        """, (name, description, price, image, seller_name, roll_number, contact, email)) # MODIFIED
         db.commit()
         return redirect(url_for('buy_sell'))
 
-    items = db.execute("SELECT * FROM buy_sell_items").fetchall()
+    items = db.execute("SELECT * FROM buy_sell_items ORDER BY id DESC").fetchall()
     return render_template('buy_sell.html', items=items)
+
+# --- MODIFIED: ADDED ROUTE FOR PRODUCT DETAIL PAGE ---
+@app.route('/product/<int:item_id>')
+def product_detail(item_id):
+    if 'username' not in session:
+        return redirect(url_for('login'))
+    
+    db = get_db()
+    item = db.execute("SELECT * FROM buy_sell_items WHERE id = ?", (item_id,)).fetchone()
+    if item is None:
+        return "Item not found!", 404
+    return render_template('product_detail.html', item=item)
 
 # -------------------- LOST & FOUND --------------------
 @app.route('/lost-found', methods=['GET', 'POST'])
@@ -150,20 +165,33 @@ def lost_found():
     if request.method == 'POST':
         item = request.form['item']
         description = request.form.get('description')
-        image_url = request.form.get('image_url')
-        finder_contact = request.form.get('finder_contact')
+        image = request.form.get('image') # MODIFIED
+        contact = request.form.get('contact') # MODIFIED
         status = request.form['status']
 
         db.execute("""
             INSERT INTO lost_found_items
-            (item, description, image_url, finder_contact, status)
+            (item, description, image, contact, status)
             VALUES (?, ?, ?, ?, ?)
-        """, (item, description, image_url, finder_contact, status))
+        """, (item, description, image, contact, status)) # MODIFIED
         db.commit()
         return redirect(url_for('lost_found'))
 
-    items = db.execute("SELECT * FROM lost_found_items").fetchall()
+    items = db.execute("SELECT * FROM lost_found_items ORDER BY id DESC").fetchall()
     return render_template('lost_found.html', items=items)
+
+# --- MODIFIED: ADDED ROUTE FOR LOST/FOUND DETAIL PAGE ---
+@app.route('/lost-found/<int:item_id>')
+def lost_found_detail(item_id):
+    if 'username' not in session:
+        return redirect(url_for('login'))
+        
+    db = get_db()
+    item = db.execute("SELECT * FROM lost_found_items WHERE id = ?", (item_id,)).fetchone()
+    if item is None:
+        return "Item not found!", 404
+    return render_template('lostfound_detail.html', item=item)
+
 
 # -------------------- MAIN --------------------
 if __name__ == '__main__':

@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="product-detail">
+    <a href="{{ url_for('buy_sell') }}" class="back-link">← Back to Buy & Sell</a>
+    
+    <div class="detail-container">
+        <div>
+            {% if item.image %}
+            <img src="{{ item.image }}" alt="{{ item.name }}" class="detail-image">
+            {% else %}
+            <div class="detail-image" style="display: flex; align-items: center; justify-content: center; background: #e3f2fd; color: #4a90e2; font-size: 5rem;">📦</div>
+            {% endif %}
+        </div>
+        
+        <div class="detail-info">
+            <h3>{{ item.name }}</h3>
+            <div class="detail-price">₹{{ item.price }}</div>
+            
+            <div class="detail-section">
+                <h4>Description</h4>
+                <p>{{ item.description }}</p>
+            </div>
+            
+            <div class="seller-info">
+                <h4>Seller Information</h4>
+                <p><strong>Name:</strong> {{ item.seller_name }}</p>
+                <p><strong>Roll Number:</strong> {{ item.roll_number }}</p>
+                <p><strong>Contact:</strong> {{ item.contact }}</p>
+                <p><strong>Email:</strong> {{ item.email }}</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
