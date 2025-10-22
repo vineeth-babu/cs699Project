@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Lost & Found</h2>
+<ul>
+    {% for item in items %}
+    <li>{{ item.item }} - {{ item.status }}</li>
+    {% endfor %}
+</ul>
+
+<h3>Report Item</h3>
+<form method="post">
+    Item: <input type="text" name="item"><br>
+    Status: 
+    <select name="status">
+        <option value="Lost">Lost</option>
+        <option value="Found">Found</option>
+    </select><br>
+    <input type="submit" value="Report">
+</form>
+{% endblock %}

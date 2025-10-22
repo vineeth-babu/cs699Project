@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Buy & Sell Items</h2>
+<ul>
+    {% for item in items %}
+    <li>{{ item.name }} - ₹{{ item.price }}</li>
+    {% endfor %}
+</ul>
+
+<h3>Add New Item</h3>
+<form method="post">
+    Name: <input type="text" name="name"><br>
+    Price: <input type="number" name="price"><br>
+    <input type="submit" value="Add">
+</form>
+{% endblock %}
