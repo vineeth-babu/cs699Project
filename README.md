@@ -1,82 +1,139 @@
-# IITBay: Buy, Sell and Find @ IITB
+#  IITBay: Buy, Sell and Find @ IITB  
 
-IITBay is a student-driven platform designed to make campus life simpler.
-Students can sell items they no longer need, buy useful things at affordable prices, and post in the Lost & Found section to recover their belongings.
-This project encourages reuse, saves money, and builds a stronger sense of community within IIT Bombay.
+**IITBay** is a student-driven web application built using **Flask** to simplify campus life at **IIT Bombay**.  
+It allows students to:  
+-  Buy and sell used items within the campus  
+-  Report and recover lost belongings through the **Lost & Found** section  
+-  Encourage reuse, save money, and build community  
 
-# Team Details
+---
 
- Team Name: IITBay Developers
+##  Team Details  
 
-Vineeth - Backend Developer (Flask routes, templates, logic)
-Harshith Matta - Frontend Design (HTML, CSS, styling, static content)
-Jamala Mohan Sai Naik - Forms and UI Integration (template testing, navigation, layout)
+**Team Name:** *Team Alpha*  
+###  Vineeth — Backend Developer
+- Built the complete **Flask backend**
+- Implemented all **routes** and logic
+- Designed **database setup (`iitbay.db`)**
+- Created **login/register system** and **session management**
 
-# Project Setup Instructions
+---
 
-Clone the Repository
-git clone https://github.com/your-username/IITBay.git
+###  Harshith Matta — Frontend Designer
+- Designed **UI layout and overall styling (`style.css`)**
+- Implemented **responsive design**
+- Created **`product_detail.html`** and **`lostfound_detail.html`** pages
+- Improved **database column consistency** and naming
 
-cd IITBay
+---
 
-Create and Activate Virtual Environment (Recommended)
+###  Jamala Mohan Sai Naik — UI & Form Integration
+- Created **`buy_sell.html`** and **`lost_found.html`** form pages
+- Handled **frontend–backend integration**
+- Tested **navigation**, **form submission**, and **data flow** across templates
 
-For Windows:
-python -m venv .venv
-.venv\Scripts\activate
+##  Features  
 
-For macOS/Linux:
-python3 -m venv .venv
-source .venv/bin/activate
+-  **User Authentication:** Register and login system with session-based access  
+-  **Buy & Sell Portal:** Add, browse, and view items for sale  
+-  **Lost & Found Section:** Report and search lost/found items  
+-  **Dynamic Detail Pages:** Individual item pages for detailed view  
+-  **SQLite Database:** Persistent data storage (`iitbay.db`)  
+-  **Template Inheritance:** Clean modular structure using Jinja2  
+-  **Role System:** Default user role = `student` (extendable for admin later)
 
-Install Required Libraries
-Make sure you have pip installed, then run:
-pip install -r requirements.txt
+---
 
-Example content of requirements.txt:
-Flask==3.0.3
-
-Run the Flask App
-python app.py
-
-After running, you should see:
-
-Running on http://127.0.0.1:5001
-
-Open this address in your browser to view the app.
-
-# Project Structure
+##  Project Structure  
 
 IITBay/
 │
-├── app.py - Flask backend
-├── requirements.txt - Python dependencies
-├── templates/ - HTML templates (Jinja2)
+├── app.py # Flask backend (main application)
+├── iitbay.db # SQLite database file
+├── requirements.txt # Python dependencies
+├── static/
+│ └── style.css # Custom frontend styling
+│
+├── templates/
 │ ├── base.html
 │ ├── home.html
+│ ├── register.html
+│ ├── login.html
 │ ├── buy_sell.html
-│ └── lost_found.html
-├── static/ - (Optional) CSS, JS, images
-└── README.md - Project documentation
+│ ├── lost_found.html
+│ ├── product_detail.html
+│ ├── lostfound_detail.html
+│ └── test.html # Test page for verifying Flask setup
+│
+└── README.md # Project documentation
 
-# Screenshots to Include for Submission
+##  Setup Instructions
 
-Home Page (/)
+###  1. Clone the Repository
+git https://github.com/vineeth-babu/cs699Project.git
+cd cs699Project
 
-Buy/Sell Page (/buy-sell)
+###  2. Create and Activate a Virtual Environment
 
-Lost & Found Page (/lost-found)
+For Windows:
 
-Optional: Screenshot of terminal showing Flask running
+python -m venv .venv
+.venv\Scripts\activate
 
-# Features (Current Version)
 
-Basic Flask app setup
+For macOS/Linux:
 
-Navigation between Home, Buy/Sell, and Lost & Found
+python3 -m venv .venv
+source .venv/bin/activate
 
-Form submission to add items dynamically (in-memory)
+### 3. Install Dependencies
+pip install -r requirements.txt
 
-Jinja template inheritance (base.html)
 
-Modular structure for future expansion
+Example requirements.txt:
+
+Flask==3.0.3
+
+### 4. Run the Flask App
+python app.py
+
+
+If successful, you should see:
+
+Running on http://127.0.0.1:5001
+
+
+Open this address in your browser to view the app.
+
+## Testing Flask Setup
+
+Create a simple test file inside the templates folder named test.html:
+
+<h1>Hello Flask!</h1>
+<p>If you see this, Flask is working.</p>
+
+
+Then run:
+
+python app.py
+
+
+Visit http://127.0.0.1:5001/test to confirm Flask is running.
+
+## Future Enhancements
+
+--Image upload functionality for items
+
+--Search and filter system
+
+--Analytics on popular items and campus activity
+
+## Tech Stack
+
+Backend: Flask (Python)
+
+Database: SQLite3
+
+Frontend: HTML, CSS (custom), Jinja2 templates
+
+Version Control: Git & GitHub
