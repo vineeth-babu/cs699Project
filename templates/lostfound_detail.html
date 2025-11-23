@@ -1,37 +1,73 @@
 {% extends "base.html" %}
 {% block content %}
-<div class="product-detail">
-    <a href="{{ url_for('lost_found') }}" class="back-link">← Back to Lost & Found</a>
-    
+
+<a href="{{ url_for('lost_found') }}" class="back-link">← Back to Lost & Found</a>
+
+<div class="product-detail-container">
+
     <div class="detail-container">
-        <div>
+
+        
+        <div class="left-section">
             {% if item.image %}
-            <img src="{{ item.image }}" alt="{{ item.item }}" class="detail-image">
+                {% if item.image.startswith('http') %}
+                    <img src="{{ item.image }}" class="product-main-image">
+                {% else %}
+                    <img src="{{ url_for('static', filename='uploads/' ~ item.image) }}" 
+                         class="product-main-image">
+                {% endif %}
             {% else %}
-            <div class="detail-image" style="display: flex; align-items: center; justify-content: center; background: #fff3e0; color: #ff9800; font-size: 5rem;">
-                {% if item.status == 'Lost' %}❓{% else %}✓{% endif %}
-            </div>
+                <div class="product-main-image"
+                    style="display:flex;align-items:center;justify-content:center;background:#e3f2fd;">
+                    📦
+                </div>
             {% endif %}
         </div>
+
         
-        <div class="detail-info">
-            <h3>{{ item.item }}</h3>
-            {% if item.status == 'Lost' %}
-            <span class="status-lost" style="font-size: 1.2rem; padding: 8px 20px;">{{ item.status }}</span>
-            {% else %}
-            <span class="status-found" style="font-size: 1.2rem; padding: 8px 20px;">{{ item.status }}</span>
-            {% endif %}
+        <div class="right-section">
+
             
-            <div class="detail-section" style="margin-top: 20px;">
-                <h4>Description</h4>
-                <p>{{ item.description }}</p>
+            {% if session['user_id'] == item.user_id or session['role'] == 'admin' %}
+
+            <div class="edit-delete-buttons">
+                <a href="{{ url_for('edit_lost_item', item_id=item.id) }}" class="edit-btn">✏️ Edit</a>
+
+                <a href="{{ url_for('delete_lost_item', item_id=item.id) }}"
+                   onclick="return confirm('Delete this item?')" 
+                   class="delete-btn">🗑 Delete</a>
+
+                {% if item.status != 'resolved' %}
+                <a href="{{ url_for('resolve_lost_item', item_id=item.id) }}" class="sold-btn">
+                    ✔ Mark as Resolved
+                </a>
+                {% endif %}
             </div>
+            {% endif %}
+
             
-            <div class="seller-info">
-                <h4>Contact Information</h4>
+            <h2 class="product-title">{{ item.item }}</h2>
+            <div class="product-divider"></div>
+
+            <div class="product-price-large">
+                {{ item.status|capitalize }}
+            </div>
+
+            
+            <div class="info-card">
+                <h3 class="info-heading">Description</h3>
+                <p class="info-text">{{ item.description }}</p>
+            </div>
+
+            
+            <div class="info-card">
+                <h3 class="info-heading">Contact Information</h3>
                 <p><strong>Phone:</strong> {{ item.contact }}</p>
             </div>
+
         </div>
+
     </div>
 </div>
+
 {% endblock %}

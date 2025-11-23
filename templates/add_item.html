@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block content %}
+
+<h2>Add New Item for Sale</h2>
+
+<div class="form-wrapper">
+    <form method="post" enctype="multipart/form-data" class="add-form">
+
+        <label>Product Name:</label>
+        <input type="text" name="name" required>
+
+        <label>Description:</label>
+        <textarea name="description" rows="3"></textarea>
+
+        <label>Price (₹):</label>
+        <input type="number" name="price" step="0.01" required>
+
+        <label>Product Image </label>
+        <input type="file" name="image" accept="image/*">
+
+
+        <label>Your Name:</label>
+        <input type="text" name="seller_name" required>
+
+        <label>Roll Number:</label>
+        <input type="text" name="roll_number">
+
+        <label>Contact Number:</label>
+        <input type="tel" name="contact" required>
+
+        <label>Email Address:</label>
+        <input type="email" name="email" required>
+
+        <label>Pickup Place:</label>
+        <input type="text" name="pickup_place" required>
+
+        <input type="submit" value="Add Item">
+    </form>
+</div>
+
+{% endblock %}

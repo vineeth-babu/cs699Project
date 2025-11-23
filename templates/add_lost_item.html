@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block content %}
+
+<h2>Add Item to Lost & Found</h2>
+
+<div class="form-wrapper">
+    <form method="post" enctype="multipart/form-data" class="add-form">
+
+        <label>Item Name:</label>
+        <input type="text" name="item" required>
+
+        <label>Description:</label>
+        <textarea name="description" rows="3"></textarea>
+
+        <label>Image of the Item:</label>
+        <input type="file" name="image" accept="image/*">
+
+
+        <label>Contact:</label>
+        <input type="text" name="contact" required>
+
+        <label>Status:</label>
+        <select name="status" required>
+            <option value="lost">Lost</option>
+            <option value="found">Found</option>
+        </select>
+
+        <input type="submit" value="Add Item">
+    </form>
+</div>
+
+{% endblock %}

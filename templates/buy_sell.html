@@ -1,51 +1,77 @@
 {% extends "base.html" %}
 {% block content %}
-    <h2>Buy & Sell Items</h2>
 
-    <div class="product-grid">
-        {% for item in items %}
-            <a href="{{ url_for('product_detail', item_id=item.id) }}" class="product-card">
-                {% if item.image %}
-                    <img src="{{ item.image }}" alt="{{ item.name }}" class="product-image">
-                {% else %}
-                    <div class="product-image" style="display: flex; align-items: center; justify-content: center; background: #e3f2fd; color: #4a90e2; font-size: 2rem;">📦</div>
-                {% endif %}
-                <div class="product-info">
-                    <div class="product-name">{{ item.name }}</div>
-                    <div class="product-price">₹{{ item.price }}</div>
-                </div>
-            </a>
+
+<div class="bs-header">
+    <h2>Buy & Sell</h2>
+    <a href="{{ url_for('add_item') }}" class="add-item-top-btn">+ Add Item</a>
+</div>
+
+
+<div class="toggle-tabs">
+    <button class="toggle-btn active" onclick="showTab('available')">Available Items</button>
+    <button class="toggle-btn" onclick="showTab('sold')">Sold Out</button>
+</div>
+
+
+
+<div id="available" class="tab-section">
+    <div class="product-grid center-grid">
+        {% for item in available %}
+        <a href="{{ url_for('product_detail', item_id=item.id) }}" class="product-card">
+            {% if item.image %}
+                <img src="{{ url_for('static', filename='uploads/' ~ item.image) }}" class="product-image">
+            {% else %}
+                <div class="product-image" style="display:flex;align-items:center;justify-content:center;background:#e3f2fd;">image</div>
+            {% endif %}
+            <div class="product-info">
+                <div class="product-name">{{ item.name }}</div>
+                <div class="product-price">₹{{ item.price }}</div>
+            </div>
+        </a>
         {% else %}
-            <p>No items for sale yet. Be the first to add one!</p>
+        <p>No available items.</p>
         {% endfor %}
     </div>
+</div>
 
-    <h3>Add New Item for Sale</h3>
-    <form method="post">
-        <label for="name">Product Name:</label>
-        <input type="text" id="name" name="name" required>
 
-        <label for="description">Description:</label>
-        <textarea id="description" name="description" rows="3"></textarea>
+<div id="sold" class="tab-section" style="display:none;">
+    <div class="product-grid center-grid">
+        {% for item in sold %}
+        <a href="{{ url_for('product_detail', item_id=item.id) }}" class="product-card sold-card">
+            {% if item.image %}
+                <img src="{{ url_for('static', filename='uploads/' ~ item.image) }}" class="product-image sold-img">
+            {% else %}
+                <div class="product-image sold-img"
+                     style="display:flex;align-items:center;justify-content:center;background:#e3f2fd;">image</div>
+            {% endif %}
+            <div class="product-info">
+                <div class="product-name">{{ item.name }}</div>
+                <div class="product-price">₹{{ item.price }}</div>
+            </div>
+        </a>
+        {% else %}
+        <p>No sold-out items yet.</p>
+        {% endfor %}
+    </div>
+</div>
 
-        <label for="price">Price (₹):</label>
-        <input type="number" id="price" name="price" step="0.01" required>
 
-        <label for="image">Product Image URL:</label>
-        <input type="text" id="image" name="image">
 
-        <label for="seller_name">Your Name:</label>
-        <input type="text" id="seller_name" name="seller_name" required>
-        
-        <label for="roll_number">Roll Number:</label>
-        <input type="text" id="roll_number" name="roll_number">
-        
-        <label for="contact">Contact Number:</label>
-        <input type="tel" id="contact" name="contact" required>
-        
-        <label for="email">Email Address:</label>
-        <input type="email" id="email" name="email" required>
+<script>
+function showTab(tab) {
+    document.getElementById('available').style.display = 'none';
+    document.getElementById('sold').style.display = 'none';
 
-        <input type="submit" value="Add Item">
-    </form>
+    document.getElementById(tab).style.display = 'block';
+
+    let btns = document.querySelectorAll('.toggle-btn');
+    btns.forEach(btn => btn.classList.remove('active'));
+
+    if (tab === 'available') btns[0].classList.add('active');
+    else btns[1].classList.add('active');
+}
+</script>
+
 {% endblock %}

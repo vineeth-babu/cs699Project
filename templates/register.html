@@ -1,6 +1,13 @@
 {% extends "base.html" %}
 {% block content %}
+
 <h2>Register</h2>
+
+{% if error %}
+    <p style="color: red; font-weight: 600; margin-bottom: 15px;">
+        {{ error }}
+    </p>
+{% endif %}
 
 <form method="post" action="{{ url_for('register') }}">
     <label>Username:</label>
@@ -15,8 +22,14 @@
         <option value="admin">Admin</option>
     </select><br><br>
 
+    <label>Role Verification:</label>
+    <input type="text" name="role_key"
+           placeholder="If Student → type Student, If Admin → enter passkey"
+           required><br><br>
+
     <input type="submit" value="Register">
 </form>
 
 <p>Already have an account? <a href="{{ url_for('login') }}">Login here</a></p>
+
 {% endblock %}

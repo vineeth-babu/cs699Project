@@ -1,8 +1,10 @@
 {% extends "base.html" %}
 {% block content %}
+
 <h2>Edit Product</h2>
 
-<form method="post">
+<form method="post" enctype="multipart/form-data">
+
     <label>Name:</label>
     <input type="text" name="name" value="{{ item.name }}" required>
 
@@ -12,9 +14,26 @@
     <label>Price:</label>
     <input type="number" name="price" step="0.01" value="{{ item.price }}" required>
 
-    <label>Image URL:</label>
-    <input type="text" name="image" value="{{ item.image }}">
+    <label>Current Image:</label><br>
+    {% if item.image %}
+        {% if item.image.startswith('http') %}
+            <img src="{{ item.image }}" class="product-main-image" style="max-width:180px;">
+        {% else %}
+            <img src="{{ url_for('static', filename='uploads/' ~ item.image) }}" 
+                 class="product-main-image" style="max-width:180px;">
+        {% endif %}
+    {% else %}
+        <p>No image uploaded</p>
+    {% endif %}
+    <br><br>
+
+    <label>Upload New Image (optional):</label>
+    <input type="file" name="image" accept="image/*">
+
+    
+    <input type="hidden" name="existing_image" value="{{ item.image }}">
 
     <input type="submit" value="Update Item">
 </form>
+
 {% endblock %}

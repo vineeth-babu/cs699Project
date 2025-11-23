@@ -1,51 +1,65 @@
 {% extends "base.html" %}
 {% block content %}
-    <h2>Lost & Found</h2>
 
-    <div class="product-grid">
-        {% for item in items %}
+<div class="bs-header">
+    <h2>Lost & Found</h2>
+    <a href="{{ url_for('add_lost_item') }}" class="add-item-top-btn">+ Add Lost Item</a>
+</div>
+
+<div class="toggle-tabs">
+    <button class="toggle-btn active" onclick="showTab('active')">Active</button>
+    <button class="toggle-btn" onclick="showTab('resolved')">Resolved </button>
+</div>
+
+
+<div id="active" class="tab-section">
+    <div class="product-grid center-grid">
+        {% for item in active_items %}
             <a href="{{ url_for('lost_found_detail', item_id=item.id) }}" class="product-card">
-                 {% if item.image %}
-                    <img src="{{ item.image }}" alt="{{ item.item }}" class="product-image">
+                {% if item.image %}
+                    <img src="{{ url_for('static', filename='uploads/' ~ item.image) }}" class="product-image">
                 {% else %}
-                    <div class="product-image" style="display: flex; align-items: center; justify-content: center; font-size: 2rem; background-color: {% if item.status == 'Lost' %}#fff3e0{% else %}#e8f5e9{% endif %};">
-                       {% if item.status == 'Lost' %}❓{% else %}✓{% endif %}
-                    </div>
+                    <div class="product-image" style="display:flex;align-items:center;justify-content:center;background:#e3f2fd;">Image</div>
                 {% endif %}
+
                 <div class="product-info">
                     <div class="product-name">{{ item.item }}</div>
-                    {% if item.status == 'Lost' %}
-                        <span class="status-lost">{{ item.status }}</span>
-                    {% else %}
-                        <span class="status-found">{{ item.status }}</span>
-                    {% endif %}
+                    <div class="product-price">{{ item.status|capitalize }}</div>
                 </div>
             </a>
-        {% else %}
-            <p>No items reported yet. Report an item below.</p>
         {% endfor %}
     </div>
+</div>
 
-    <h3>Report an Item</h3>
-    <form method="post">
-        <label for="item">Item Name:</label>
-        <input type="text" id="item" name="item" required>
 
-        <label for="description">Description:</label>
-        <textarea id="description" name="description" rows="3"></textarea>
-        
-        <label for="image">Image URL:</label>
-        <input type="text" id="image" name="image">
+<div id="resolved" class="tab-section" style="display:none;">
+    <div class="product-grid center-grid">
+        {% for item in resolved_items %}
+            <a href="{{ url_for('lost_found_detail', item_id=item.id) }}" class="product-card sold-card">
+                {% if item.image %}
+                    <img src="{{ url_for('static', filename='uploads/' ~ item.image) }}" class="product-image sold-img">
+                {% else %}
+                    <div class="product-image sold-img" style="display:flex;align-items:center;justify-content:center;background:#e3f2fd;">Image</div>
+                {% endif %}
 
-        <label for="contact">Your Contact Number:</label>
-        <input type="tel" id="contact" name="contact" required>
+                <div class="product-info">
+                    <div class="product-name">{{ item.item }}</div>
+                    <div class="product-price">{{ item.status|capitalize }}</div>
+                </div>
+            </a>
+        {% endfor %}
+    </div>
+</div>
 
-        <label for="status">Status:</label>
-        <select id="status" name="status">
-            <option value="Lost">I Lost this item</option>
-            <option value="Found">I Found this item</option>
-        </select>
+<script>
+function showTab(tab) {
+    document.getElementById("active").style.display = tab === "active" ? "block" : "none";
+    document.getElementById("resolved").style.display = tab === "resolved" ? "block" : "none";
 
-        <input type="submit" value="Report Item">
-    </form>
+    const buttons = document.querySelectorAll(".toggle-btn");
+    buttons.forEach(btn => btn.classList.remove("active"));
+    event.target.classList.add("active");
+}
+</script>
+
 {% endblock %}

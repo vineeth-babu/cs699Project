@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% block content %}
+
+<h2>Your Products</h2>
+
+
+<h3 class="section-title">Buy & Sell Items</h3>
+<div class="product-grid">
+    {% if buy_sell_items %}
+        {% for item in buy_sell_items %}
+            <a href="{{ url_for('product_detail', item_id=item.id) }}" class="product-card">
+                {% if item.image %}
+                    <img src="{{ url_for('static', filename='uploads/' ~ item.image) }}" class="product-image">
+                {% else %}
+                    <div class="product-image"
+                         style="display:flex;align-items:center;justify-content:center;background:#e3f2fd;">Image</div>
+                {% endif %}
+
+                <div class="product-info">
+                    <div class="product-name">{{ item.name }}</div>
+                    <div class="product-price">₹{{ item.price }}</div>
+                    <p>Status: {{ item.status }}</p>
+                </div>
+            </a>
+        {% endfor %}
+    {% else %}
+        <p>You haven't posted any items for sale.</p>
+    {% endif %}
+</div>
+
+
+
+<h3 class="section-title" style="margin-top:40px;">Lost & Found Items</h3>
+<div class="product-grid">
+    {% if lost_found_items %}
+        {% for item in lost_found_items %}
+            <a href="{{ url_for('lost_found_detail', item_id=item.id) }}" class="product-card">
+                {% if item.image %}
+                    <img src="{{ url_for('static', filename='uploads/' ~ item.image) }}" class="product-image">
+                {% else %}
+                    <div class="product-image"
+                         style="display:flex;align-items:center;justify-content:center;background:#e3f2fd;">Image</div>
+                {% endif %}
+
+                <div class="product-info">
+                    <div class="product-name">{{ item.item }}</div>
+                    <div class="product-price">{{ item.status | capitalize }}</div>
+                </div>
+            </a>
+        {% endfor %}
+    {% else %}
+        <p>You haven't posted any lost or found items.</p>
+    {% endif %}
+</div>
+
+{% endblock %}

@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block content %}
+
+<h2>Edit Lost & Found Item</h2>
+
+<form method="post" enctype="multipart/form-data">
+
+    <label>Item Name:</label>
+    <input type="text" name="item" value="{{ item.item }}" required>
+
+    <label>Description:</label>
+    <textarea name="description" rows="3">{{ item.description }}</textarea>
+
+    <label>Contact:</label>
+    <input type="text" name="contact" value="{{ item.contact }}" required>
+
+    <label>Current Image:</label><br>
+    {% if item.image %}
+        {% if item.image.startswith('http') %}
+            <img src="{{ item.image }}" style="max-width:160px; border-radius:10px;">
+        {% else %}
+            <img src="{{ url_for('static', filename='uploads/' ~ item.image) }}"
+                 style="max-width:160px; border-radius:10px;">
+        {% endif %}
+    {% else %}
+        <p>No image uploaded</p>
+    {% endif %}
+    <br><br>
+
+    <label>Upload New Image (optional):</label>
+    <input type="file" name="image" accept="image/*">
+
+    <input type="hidden" name="existing_image" value="{{ item.image }}">
+
+    <label>Status:</label>
+    <select name="status" required>
+        <option value="lost" {% if item.status == 'lost' %}selected{% endif %}>Lost</option>
+        <option value="found" {% if item.status == 'found' %}selected{% endif %}>Found</option>
+        <option value="resolved" {% if item.status == 'resolved' %}selected{% endif %}>Resolved</option>
+    </select>
+
+    <input type="submit" value="Update Item">
+</form>
+
+{% endblock %}
