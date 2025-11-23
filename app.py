@@ -1,4 +1,3 @@
-# app.py
 from flask import Flask, render_template, request, redirect, url_for, session, g
 import sqlite3
 import os
@@ -8,12 +7,12 @@ app.secret_key = "iitbay_secret_key"
 
 DATABASE = "iitbay.db"
 
-# -------------------- DATABASE --------------------
+
 def get_db():
     db = getattr(g, '_database', None)
     if db is None:
         db = g._database = sqlite3.connect(DATABASE)
-        db.row_factory = sqlite3.Row  # access columns by name
+        db.row_factory = sqlite3.Row  
     return db
 
 @app.teardown_appcontext
@@ -27,7 +26,7 @@ def init_db():
         db = get_db()
         cursor = db.cursor()
 
-        # Users table
+        
         cursor.execute("""
             CREATE TABLE IF NOT EXISTS users (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -37,7 +36,7 @@ def init_db():
             )
         """)
 
-        # MODIFIED: Renamed image_url to image and contact_number to contact for consistency
+        
         cursor.execute("""
             CREATE TABLE IF NOT EXISTS buy_sell_items (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -52,7 +51,7 @@ def init_db():
             )
         """)
 
-        # MODIFIED: Renamed image_url to image and finder_contact to contact for consistency
+        
         cursor.execute("""
             CREATE TABLE IF NOT EXISTS lost_found_items (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -65,14 +64,14 @@ def init_db():
         """)
         db.commit()
 
-# -------------------- ROUTES --------------------
+
 @app.route('/')
 def home():
     if 'username' in session:
         return render_template('home.html', username=session['username'])
     return render_template('home.html')
 
-# -------------------- REGISTER --------------------
+
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     if request.method == 'POST':
@@ -89,7 +88,7 @@ def register():
             return "Username already exists. Try another."
     return render_template('register.html')
 
-# -------------------- LOGIN --------------------
+
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
@@ -107,13 +106,13 @@ def login():
             return "Invalid credentials. Try again."
     return render_template('login.html')
 
-# -------------------- LOGOUT --------------------
+
 @app.route('/logout')
 def logout():
     session.clear()
     return redirect(url_for('home'))
 
-# -------------------- BUY & SELL --------------------
+
 @app.route('/buy-sell', methods=['GET', 'POST'])
 def buy_sell():
     if 'username' not in session:
@@ -125,24 +124,24 @@ def buy_sell():
         name = request.form['name']
         description = request.form.get('description')
         price = request.form['price']
-        image = request.form.get('image') # MODIFIED
+        image = request.form.get('image') 
         seller_name = request.form.get('seller_name')
         roll_number = request.form.get('roll_number')
-        contact = request.form.get('contact') # MODIFIED
+        contact = request.form.get('contact') 
         email = request.form.get('email')
 
         db.execute("""
             INSERT INTO buy_sell_items
             (name, description, price, image, seller_name, roll_number, contact, email)
             VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-        """, (name, description, price, image, seller_name, roll_number, contact, email)) # MODIFIED
+        """, (name, description, price, image, seller_name, roll_number, contact, email)) 
         db.commit()
         return redirect(url_for('buy_sell'))
 
     items = db.execute("SELECT * FROM buy_sell_items ORDER BY id DESC").fetchall()
     return render_template('buy_sell.html', items=items)
 
-# --- MODIFIED: ADDED ROUTE FOR PRODUCT DETAIL PAGE ---
+
 @app.route('/product/<int:item_id>')
 def product_detail(item_id):
     if 'username' not in session:
@@ -154,7 +153,7 @@ def product_detail(item_id):
         return "Item not found!", 404
     return render_template('product_detail.html', item=item)
 
-# -------------------- LOST & FOUND --------------------
+
 @app.route('/lost-found', methods=['GET', 'POST'])
 def lost_found():
     if 'username' not in session:
@@ -165,22 +164,22 @@ def lost_found():
     if request.method == 'POST':
         item = request.form['item']
         description = request.form.get('description')
-        image = request.form.get('image') # MODIFIED
-        contact = request.form.get('contact') # MODIFIED
+        image = request.form.get('image') 
+        contact = request.form.get('contact') 
         status = request.form['status']
 
         db.execute("""
             INSERT INTO lost_found_items
             (item, description, image, contact, status)
             VALUES (?, ?, ?, ?, ?)
-        """, (item, description, image, contact, status)) # MODIFIED
+        """, (item, description, image, contact, status)) 
         db.commit()
         return redirect(url_for('lost_found'))
 
     items = db.execute("SELECT * FROM lost_found_items ORDER BY id DESC").fetchall()
     return render_template('lost_found.html', items=items)
 
-# --- MODIFIED: ADDED ROUTE FOR LOST/FOUND DETAIL PAGE ---
+
 @app.route('/lost-found/<int:item_id>')
 def lost_found_detail(item_id):
     if 'username' not in session:
@@ -193,7 +192,7 @@ def lost_found_detail(item_id):
     return render_template('lostfound_detail.html', item=item)
 
 
-# -------------------- MAIN --------------------
+
 if __name__ == '__main__':
     if not os.path.exists(DATABASE):
         init_db()

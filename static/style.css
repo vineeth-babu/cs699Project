@@ -20,7 +20,7 @@ body {
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
-/* Header Styles */
+
 header {
     background: #4a90e2;
     padding: 25px 40px;
@@ -55,7 +55,7 @@ nav a:hover {
     color: #4a90e2;
 }
 
-/* Main Content */
+
 main {
     padding: 40px;
     min-height: 400px;
@@ -69,7 +69,6 @@ main {
     margin-bottom: 40px;
 }
 
-/* This is the main card/tile for each item */
 .product-card {
     display: flex; 
     align-items: center; 
@@ -88,7 +87,7 @@ main {
     box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
 }
 
-/* Styles for the product image or placeholder */
+
 .product-image {
     width: 80px;
     height: 80px;
@@ -97,7 +96,7 @@ main {
     flex-shrink: 0; 
 }
 
-/* Styles for the text content next to the image */
+
 .product-info {
     flex-grow: 1; 
 }
@@ -115,7 +114,7 @@ main {
     color: #4a90e2;
 }
 
-/*Detail Page Styles*/
+
 .product-detail .back-link {
     display: inline-block;
     margin-bottom: 30px;
@@ -186,7 +185,7 @@ main h2, main h3 {
     border-bottom: 3px solid #4a90e2;
 }
 
-/* Form Styles */
+
 form {
     background: #f8f9fa;
     padding: 30px;
@@ -243,7 +242,7 @@ form input[type="submit"]:hover {
     transform: translateY(-2px);
 }
 
-/* Status Badges */
+
 .status-lost {
     display: inline-block;
     padding: 4px 12px;
@@ -264,7 +263,7 @@ form input[type="submit"]:hover {
     font-weight: 600;
 }
 
-/* Home page styles */
+
 .home-links {
     display: flex;
     justify-content: center;
