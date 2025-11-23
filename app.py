@@ -7,7 +7,6 @@ app.secret_key = "iitbay_secret_key"
 
 DATABASE = "iitbay.db"
 
-
 def get_db():
     db = getattr(g, '_database', None)
     if db is None:
@@ -26,7 +25,6 @@ def init_db():
         db = get_db()
         cursor = db.cursor()
 
-        
         cursor.execute("""
             CREATE TABLE IF NOT EXISTS users (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -36,7 +34,6 @@ def init_db():
             )
         """)
 
-        
         cursor.execute("""
             CREATE TABLE IF NOT EXISTS buy_sell_items (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -47,11 +44,11 @@ def init_db():
                 seller_name TEXT,
                 roll_number TEXT,
                 contact TEXT,
-                email TEXT
+                email TEXT,
+                user_id INTEGER
             )
         """)
 
-        
         cursor.execute("""
             CREATE TABLE IF NOT EXISTS lost_found_items (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -124,17 +121,17 @@ def buy_sell():
         name = request.form['name']
         description = request.form.get('description')
         price = request.form['price']
-        image = request.form.get('image') 
+        image = request.form.get('image')
         seller_name = request.form.get('seller_name')
         roll_number = request.form.get('roll_number')
-        contact = request.form.get('contact') 
+        contact = request.form.get('contact')
         email = request.form.get('email')
 
         db.execute("""
             INSERT INTO buy_sell_items
-            (name, description, price, image, seller_name, roll_number, contact, email)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-        """, (name, description, price, image, seller_name, roll_number, contact, email)) 
+            (name, description, price, image, seller_name, roll_number, contact, email, user_id)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+        """, (name, description, price, image, seller_name, roll_number, contact, email, session['user_id']))
         db.commit()
         return redirect(url_for('buy_sell'))
 
@@ -154,6 +151,60 @@ def product_detail(item_id):
     return render_template('product_detail.html', item=item)
 
 
+# ---------- EDIT PRODUCT ----------
+@app.route('/product/<int:item_id>/edit', methods=['GET', 'POST'])
+def edit_product(item_id):
+    if 'user_id' not in session:
+        return redirect(url_for('login'))
+
+    db = get_db()
+    item = db.execute("SELECT * FROM buy_sell_items WHERE id = ?", (item_id,)).fetchone()
+
+    if item is None:
+        return "Item not found."
+
+    if item['user_id'] != session['user_id']:
+        return "You are not allowed to edit this item."
+
+    if request.method == 'POST':
+        name = request.form['name']
+        description = request.form['description']
+        price = request.form['price']
+        image = request.form['image']
+
+        db.execute("""
+            UPDATE buy_sell_items
+            SET name = ?, description = ?, price = ?, image = ?
+            WHERE id = ?
+        """, (name, description, price, image, item_id))
+        db.commit()
+
+        return redirect(url_for('product_detail', item_id=item_id))
+
+    return render_template('edit_product.html', item=item)
+
+
+# ---------- DELETE PRODUCT ----------
+@app.route('/product/<int:item_id>/delete')
+def delete_product(item_id):
+    if 'user_id' not in session:
+        return redirect(url_for('login'))
+
+    db = get_db()
+    item = db.execute("SELECT * FROM buy_sell_items WHERE id = ?", (item_id,)).fetchone()
+
+    if item is None:
+        return "Item not found."
+
+    if item['user_id'] != session['user_id']:
+        return "You are not allowed to delete this item."
+
+    db.execute("DELETE FROM buy_sell_items WHERE id = ?", (item_id,))
+    db.commit()
+
+    return redirect(url_for('buy_sell'))
+
+
 @app.route('/lost-found', methods=['GET', 'POST'])
 def lost_found():
     if 'username' not in session:
@@ -164,15 +215,15 @@ def lost_found():
     if request.method == 'POST':
         item = request.form['item']
         description = request.form.get('description')
-        image = request.form.get('image') 
-        contact = request.form.get('contact') 
+        image = request.form.get('image')
+        contact = request.form.get('contact')
         status = request.form['status']
 
         db.execute("""
             INSERT INTO lost_found_items
             (item, description, image, contact, status)
             VALUES (?, ?, ?, ?, ?)
-        """, (item, description, image, contact, status)) 
+        """, (item, description, image, contact, status))
         db.commit()
         return redirect(url_for('lost_found'))
 
@@ -190,7 +241,6 @@ def lost_found_detail(item_id):
     if item is None:
         return "Item not found!", 404
     return render_template('lostfound_detail.html', item=item)
-
 
 
 if __name__ == '__main__':
