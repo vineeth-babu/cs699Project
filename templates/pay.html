@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% block content %}
+
+<h2>Complete Payment</h2>
+
+<div class="payment-box">
+    <p><strong>Product:</strong> {{ item.name }}</p>
+    <p><strong>Price:</strong> ₹{{ item.price }}</p>
+    <p><strong>Payable Amount:</strong> ₹{{ amount / 100 }}</p>
+
+    <button id="pay-btn" class="add-item-top-btn" style="padding:10px 20px; font-size:16px;">
+        Pay Now
+    </button>
+</div>
+
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
+<script>
+document.getElementById('pay-btn').onclick = function(e){
+
+    var options = {
+        "key": "{{ razorpay_key_id }}", 
+        "amount": "{{ amount }}",  
+        "currency": "INR",
+        "name": "IITBay Purchase",
+        "description": "Buying {{ item.name }}",
+        "order_id": "{{ razorpay_order_id }}",
+        "handler": function (response){
+            fetch("/payment-success", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    item_id: "{{ item.id }}",
+                    razorpay_payment_id: response.razorpay_payment_id,
+                    razorpay_order_id: response.razorpay_order_id,
+                    razorpay_signature: response.razorpay_signature
+                })
+            })
+            .then(res => res.json())
+            .then(data => {
+                alert(data.message);
+                window.location.href = "/product/{{ item.id }}";
+            });
+        },
+        "theme": {
+            "color": "#528FF0"
+        }
+    };
+    
+    var rzp = new Razorpay(options);
+    rzp.open();
+    e.preventDefault();
+}
+</script>
+
+{% endblock %}

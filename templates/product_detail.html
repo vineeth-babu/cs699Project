@@ -5,41 +5,64 @@
 
 <div class="product-detail-flex">
 
-    
+    <!-- LEFT SECTION: IMAGE -->
     <div class="left-section">
-        <img src="{{ url_for('static', filename='uploads/' ~ item.image) }}" alt="{{ item.name }}" class="product-main-image">
+        {% if item.image %}
+            <img src="{{ url_for('static', filename='uploads/' ~ item.image) }}"
+                 alt="{{ item.name }}" class="product-main-image">
+        {% else %}
+            <div class="product-main-image"
+                 style="display:flex;align-items:center;justify-content:center;background:#e3f2fd;">
+                No Image
+            </div>
+        {% endif %}
     </div>
 
-    
+    <!-- RIGHT SECTION: DETAILS -->
     <div class="right-section">
 
+        <!-- EDIT / DELETE BUTTONS FOR OWNER OR ADMIN -->
         {% if session['user_id'] == item.user_id or session['role'] == 'admin' %}
-
         <div class="edit-delete-buttons">
             <a href="{{ url_for('mark_sold', item_id=item.id) }}" class="sold-btn"
-                onclick="return confirm('Mark this item as sold?');">✔ Sold Out</a>
+               onclick="return confirm('Mark this item as sold?');">✔ Sold Out</a>
 
             <a href="{{ url_for('edit_product', item_id=item.id) }}" class="edit-btn">✏️ Edit</a>
+
             <a href="{{ url_for('delete_product', item_id=item.id) }}" class="delete-btn"
-                onclick="return confirm('Delete this item?');">🗑 Delete</a>
+               onclick="return confirm('Delete this item?');">🗑 Delete</a>
         </div>
         {% endif %}
 
-        
+        <!-- PRODUCT NAME -->
         <h4 class="product-title-heading">Product Name</h4>
         <h1 class="product-title">{{ item.name }}</h1>
 
-        
+        <!-- PRICE -->
         <h4 class="product-title-heading">Price</h4>
         <p class="product-price-large">₹{{ item.price }}</p>
 
-        
+        <!-- BUY NOW BUTTON (Visible ONLY to buyers) -->
+        {% if item.status == 'available' 
+              and 'user_id' in session 
+              and session['user_id'] != item.user_id %}
+        <div class="info-card" style="margin-top:20px;">
+            <form action="{{ url_for('create_order', item_id=item.id) }}" method="POST">
+                <button type="submit" class="sold-btn" 
+                        style="width:100%;font-size:18px;padding:12px;">
+                    💳 Buy Now (via Razorpay)
+                </button>
+            </form>
+        </div>
+        {% endif %}
+
+        <!-- DESCRIPTION -->
         <div class="info-card">
             <h4 class="product-title-heading">Description</h4>
             <p class="info-text">{{ item.description }}</p>
         </div>
 
-        
+        <!-- SELLER INFO -->
         <div class="info-card">
             <h4 class="product-title-heading">Seller Information</h4>
 

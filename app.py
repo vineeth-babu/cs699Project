@@ -2,6 +2,7 @@ from flask import Flask, render_template, request, redirect, url_for, session, g
 import sqlite3
 import os
 import datetime
+import razorpay
 
 ADMIN_PASSKEY = "iitbayadmin123"
 
@@ -15,6 +16,10 @@ ALLOWED_EXTENSIONS = {"png", "jpg", "jpeg", "gif"}
 
 app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
 
+RAZORPAY_KEY_ID = "rzp_test_Rjxas830z4dGHQ"
+RAZORPAY_KEY_SECRET = "4toRYXDU0LiIQGnDFN1MfqaG"
+
+razorpay_client = razorpay.Client(auth=(RAZORPAY_KEY_ID, RAZORPAY_KEY_SECRET))
 
 def allowed_file(filename):
     return "." in filename and filename.rsplit(".", 1)[1].lower() in ALLOWED_EXTENSIONS
@@ -462,6 +467,50 @@ def resolve_lost_item(item_id):
     db.commit()
 
     return redirect(url_for('lost_found_detail', item_id=item_id))
+
+@app.route('/create-order/<int:item_id>', methods=['POST'])
+def create_order(item_id):
+    if 'user_id' not in session:
+        return redirect(url_for('login'))
+
+    db = get_db()
+    item = db.execute("SELECT * FROM buy_sell_items WHERE id=?", (item_id,)).fetchone()
+
+    if item is None:
+        return "Item not found", 404
+
+    amount = int(float(item['price']) * 100)  # convert ₹ to paise
+
+    razorpay_order = razorpay_client.order.create(dict(
+        amount=amount,
+        currency="INR",
+        payment_capture="1"
+    ))
+
+    return render_template(
+        "pay.html",
+        item=item,
+        razorpay_order_id=razorpay_order["id"],
+        razorpay_key_id=RAZORPAY_KEY_ID,
+        amount=amount
+    )
+
+@app.route('/payment-success', methods=['POST'])
+def payment_success():
+    data = request.get_json()
+
+    item_id = data.get("item_id")
+
+    # mark item as sold after payment
+    db = get_db()
+    db.execute("UPDATE buy_sell_items SET status='sold' WHERE id=?", (item_id,))
+    db.commit()
+
+    return {"message": "Payment successful! Item marked as sold."}
+
+
+
+
 
 
 if __name__ == '__main__':
