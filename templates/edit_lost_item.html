@@ -39,6 +39,17 @@
         <option value="resolved" {% if item.status == 'resolved' %}selected{% endif %}>Resolved</option>
     </select>
 
+    <label>Category:</label>
+    <select name="category" required>
+        <option value="">Select category</option>
+        <option value="electronics" {% if item.category == 'electronics' %}selected{% endif %}>Electronics</option>
+        <option value="accessories" {% if item.category == 'accessories' %}selected{% endif %}>Accessories</option>
+        <option value="books" {% if item.category == 'books' %}selected{% endif %}>Books</option>
+        <option value="documents" {% if item.category == 'documents' %}selected{% endif %}>Documents</option>
+        <option value="clothing" {% if item.category == 'clothing' %}selected{% endif %}>Clothing</option>
+        <option value="other" {% if item.category == 'other' %}selected{% endif %}>Other</option>
+    </select>
+
     <input type="submit" value="Update Item">
 </form>
 

@@ -15,7 +15,6 @@
         <label>Image of the Item:</label>
         <input type="file" name="image" accept="image/*">
 
-
         <label>Contact:</label>
         <input type="text" name="contact" required>
 
@@ -23,6 +22,17 @@
         <select name="status" required>
             <option value="lost">Lost</option>
             <option value="found">Found</option>
+        </select>
+
+        <label>Category:</label>
+        <select name="category" required>
+            <option value="">Select category</option>
+            <option value="electronics">Electronics</option>
+            <option value="accessories">Accessories</option>
+            <option value="books">Books</option>
+            <option value="documents">Documents</option>
+            <option value="clothing">Clothing</option>
+            <option value="other">Other</option>
         </select>
 
         <input type="submit" value="Add Item">
