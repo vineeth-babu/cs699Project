@@ -2,12 +2,18 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>IITBay</title>
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 
@@ -15,26 +21,438 @@
     <div class="container">
         <header>
             <h1><a href="{{ url_for('home') }}">IITBay</a></h1>
-            <nav>
-                <a href="{{ url_for('home') }}">Home</a>
-                <a href="{{ url_for('buy_sell') }}">Buy & Sell</a>
-                <a href="{{ url_for('lost_found') }}">Lost & Found</a>
-                {% if 'user_id' in session %}
-                <a href="{{ url_for('your_products') }}">Your Products</a>
-                {% endif %}
 
-                {% if 'username' in session %}
-                <a href="{{ url_for('logout') }}">Logout</a>
-                {% else %}
-                <a href="{{ url_for('login') }}">Login</a>
+            <div class="header-right">
+                <nav>
+                    <a href="{{ url_for('home') }}">Home</a>
+                    <a href="{{ url_for('buy_sell') }}">Buy & Sell</a>
+                    <a href="{{ url_for('lost_found') }}">Lost & Found</a>
+                    {% if 'user_id' in session %}
+                    <a href="{{ url_for('your_products') }}">Your Products</a>
+                    {% endif %}
+
+                    {% if 'username' in session %}
+                    <a href="{{ url_for('logout') }}">Logout</a>
+                    {% else %}
+                    <a href="{{ url_for('login') }}">Login</a>
+                    {% endif %}
+                </nav>
+
+                {% if 'user_id' in session %}
+                <!-- Notification bell + dropdown -->
+                <div class="notif-container">
+                    <button type="button" class="notif-bell-btn" id="notifBellBtn" aria-label="Notifications">
+                        <i class="fa-solid fa-bell"></i>
+                        {% if notif_unread_count > 0 %}
+                        <span class="notif-badge" id="notif-count">{{ notif_unread_count }}</span>
+                        {% else %}
+                        <span class="notif-badge" id="notif-count" style="display:none;"></span>
+                        {% endif %}
+                    </button>
+
+                    <div class="notif-dropdown" id="notifDropdown">
+                        <div class="notif-dropdown-header">
+                            <span>Notifications</span>
+                            <span class="notif-new-label" id="notifNewLabel" style="display: none;"></span>
+                        </div>
+
+                        <div class="notif-list" id="notif-list">
+                            {% if notif_preview %}
+                            {% for n in notif_preview %}
+                            <a href="{{ n['link'] or '#' }}" class="notif-card notif-card-unread">
+                                <div class="notif-card-icon">
+                                    {% if n['type'] == 'chat' %}
+                                    <i class="fa-solid fa-comment-dots"></i>
+                                    {% else %}
+                                    <i class="fa-solid fa-bell"></i>
+                                    {% endif %}
+                                </div>
+                                <div class="notif-card-content">
+                                    <div class="notif-card-message">{{ n['message'] }}</div>
+                                    <div class="notif-card-time">{{ n['created_at'] }}</div>
+                                </div>
+                            </a>
+                            {% endfor %}
+                            {% else %}
+                            <p class="notif-empty">No unread notifications.</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
                 {% endif %}
-            </nav>
+            </div>
         </header>
 
         <main>
             {% block content %}{% endblock %}
         </main>
     </div>
+
+    <script>
+
+        async function fetchNotifications() {
+            try {
+                const res = await fetch("/notifications/fetch");
+                const data = await res.json();
+                if (!data || !data.success) return;
+
+                // badge
+                const badge = document.getElementById("notif-count");
+                if (badge) {
+                    if (data.count > 0) {
+                        badge.innerText = data.count;
+                        badge.style.display = "inline-block";
+                    } else {
+                        badge.style.display = "none";
+                    }
+                }
+
+                // new label
+                const newLabel = document.getElementById("notifNewLabel");
+                if (newLabel) {
+                    if (data.count > 0) {
+                        newLabel.innerText = `${data.count} new`;
+                        newLabel.style.display = "inline-block";
+                    } else {
+                        newLabel.innerText = "";
+                        newLabel.style.display = "none";
+                    }
+                }
+
+                // list
+                const list = document.getElementById("notif-list");
+                if (list) {
+                    list.innerHTML = "";
+                    if (!data.notifications || data.notifications.length === 0) {
+                        list.innerHTML = "<p class='notif-empty'>No unread notifications.</p>";
+                        return;
+                    }
+
+                    data.notifications.forEach(n => {
+                        const a = document.createElement("a");
+                        a.href = n.link || "#";
+                        a.className = "notif-card notif-card-unread";
+                        a.innerHTML = `
+                        <div class="notif-card-icon">
+                            ${n.type === "chat" ? '<i class="fa-solid fa-comment-dots"></i>' : '<i class="fa-solid fa-bell"></i>'}
+                        </div>
+                        <div class="notif-card-content">
+                            <div class="notif-card-message">${n.message}</div>
+                            <div class="notif-card-time">${n.created_at}</div>
+                        </div>
+                    `;
+                        a.addEventListener("click", function () {
+                            fetch("/notifications/mark_read", {
+                                method: "POST",
+                                headers: { "Content-Type": "application/json" },
+                                body: JSON.stringify({ id: n.id })
+                            });
+
+                            const badge = document.getElementById("notif-count");
+                            if (badge) badge.style.display = "none";
+
+                            const nl = document.getElementById("notifNewLabel");
+                            if (nl) nl.style.display = "none";
+                        });
+
+                        list.appendChild(a);
+                    });
+                }
+            } catch (err) {
+                console.error("Notification fetch error:", err);
+            }
+        }
+
+        // Polling settings
+        const NOTIF_POLL_INTERVAL = 3000; // ms
+        let notifPollHandle = null;
+
+        function startNotifPolling() {
+            // avoid multiple intervals
+            if (notifPollHandle) return;
+            fetchNotifications();
+            notifPollHandle = setInterval(fetchNotifications, NOTIF_POLL_INTERVAL);
+        }
+
+        function stopNotifPolling() {
+            if (notifPollHandle) {
+                clearInterval(notifPollHandle);
+                notifPollHandle = null;
+            }
+        }
+
+        // start polling when page loads
+        document.addEventListener("DOMContentLoaded", function () {
+            // only start if notif elements exist (user logged in)
+            if (document.getElementById("notifBellBtn")) {
+                startNotifPolling();
+            }
+        });
+
+        (function () {
+            const bell = document.getElementById("notifBellBtn");
+            const dropdown = document.getElementById("notifDropdown");
+
+            if (!bell || !dropdown) return;
+
+            let markedRead = false;
+
+            bell.addEventListener("click", function (e) {
+                e.stopPropagation();
+                dropdown.classList.toggle("open");
+            });
+
+            // close on outside click
+            document.addEventListener("click", function () {
+                dropdown.classList.remove("open");
+            });
+
+            dropdown.addEventListener("click", function (e) {
+                e.stopPropagation();
+            });
+        })();
+
+        (function () {
+            function formatDateLabel(dateStr) {
+                try {
+                    const d = new Date(dateStr.replace(' ', 'T'));
+                    const today = new Date();
+                    const oneDay = 24 * 60 * 60 * 1000;
+
+                    const dMid = new Date(d.getFullYear(), d.getMonth(), d.getDate());
+                    const tMid = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+
+                    const diffDays = Math.round((tMid - dMid) / oneDay);
+
+                    if (diffDays === 0) return 'Today';
+                    if (diffDays === 1) return 'Yesterday';
+                    return d.toLocaleDateString(undefined, { day: '2-digit', month: 'short', year: 'numeric' });
+                } catch (e) {
+                    return dateStr;
+                }
+            }
+
+            function formatTime(dateStr) {
+                try {
+                    const d = new Date(dateStr.replace(' ', 'T'));
+                    return d.toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' });
+                } catch (e) {
+                    return dateStr;
+                }
+            }
+
+            const overlay = document.getElementById('chatOverlay');
+            const chatWrapper = document.getElementById('chatWrapper');
+            const messagesContainer = document.getElementById('chatMessages');
+            const chatForm = document.getElementById('chatForm');
+            const closeBtn = document.getElementById('chatCloseBtn');
+            const openButtons = document.querySelectorAll('[data-chat-url]');
+
+            let pollingInterval = null;
+
+            async function loadMessages(chatType, itemId, partnerId) {
+                if (!messagesContainer) return;
+                if (!partnerId) return;
+
+                try {
+                    const res = await fetch(`/chat/messages/${chatType}/${itemId}?partner=${partnerId}`);
+                    const data = await res.json();
+                    if (!data.messages || !Array.isArray(data.messages)) return;
+
+                    messagesContainer.innerHTML = '';
+                    let lastDateLabel = null;
+
+                    data.messages.forEach(m => {
+                        const dateLabel = formatDateLabel(m.created_at);
+                        if (dateLabel !== lastDateLabel) {
+                            lastDateLabel = dateLabel;
+                            const sep = document.createElement('div');
+                            sep.className = 'chat-date-separator';
+                            sep.textContent = dateLabel;
+                            messagesContainer.appendChild(sep);
+                        }
+
+                        const row = document.createElement('div');
+                        row.className = 'chat-message-row ' + (m.is_me ? 'from-me' : 'from-them');
+
+                        const bubble = document.createElement('div');
+                        bubble.className = 'chat-bubble';
+
+                        const text = document.createElement('div');
+                        text.className = 'chat-bubble-text';
+                        text.textContent = m.message;
+
+                        const meta = document.createElement('div');
+                        meta.className = 'chat-bubble-meta';
+                        meta.textContent = formatTime(m.created_at);
+
+                        bubble.appendChild(text);
+                        bubble.appendChild(meta);
+                        row.appendChild(bubble);
+                        messagesContainer.appendChild(row);
+                    });
+
+                    // scroll to bottom
+                    messagesContainer.scrollTop = messagesContainer.scrollHeight;
+                } catch (err) {
+                    console.warn("loadMessages error:", err);
+                }
+            }
+
+            function startPolling() {
+                if (!chatWrapper) return;
+                if (pollingInterval) return;
+
+                const chatType = chatWrapper.getAttribute('data-chat-type');
+                const itemId = chatWrapper.getAttribute('data-chat-id');
+                const partnerId = chatWrapper.getAttribute('data-partner-id');
+
+                if (!chatType || !itemId || !partnerId) return;
+
+                // initial load
+                loadMessages(chatType, itemId, partnerId);
+
+                pollingInterval = setInterval(function () {
+                    loadMessages(chatType, itemId, partnerId);
+                }, 3000);
+            }
+
+            function stopPolling() {
+                if (pollingInterval) {
+                    clearInterval(pollingInterval);
+                    pollingInterval = null;
+                }
+            }
+
+            if (openButtons && openButtons.length > 0) {
+                openButtons.forEach(btn => {
+                    btn.addEventListener('click', function (e) {
+                        const chatUrl = btn.getAttribute('data-chat-url');
+                        if (chatUrl) {
+                            window.location.href = chatUrl;
+                        }
+                    });
+                });
+            }
+
+            if (overlay && overlay.classList.contains('open')) {
+                try { messagesContainer.scrollTop = messagesContainer.scrollHeight; } catch (e) { /* ignore */ }
+                startPolling();
+            }
+
+            document.addEventListener("keydown", function (e) {
+                const active = document.activeElement;
+
+                if (!active) return;
+                if (!active.matches("textarea.chat-message-input")) return;
+
+                if (e.key === "Enter" && !e.shiftKey) {
+                    e.preventDefault();
+                    const form = active.closest("form");
+                    if (form) form.submit();
+                }
+            });
+
+            if (closeBtn && overlay) {
+                closeBtn.replaceWith(closeBtn.cloneNode(true));
+                const newCloseBtn = document.getElementById("chatCloseBtn");
+
+                newCloseBtn.addEventListener("click", () => {
+                    overlay.classList.remove("open");
+
+                    const backUrl = overlay.getAttribute('data-back-url');
+                    if (backUrl) {
+                        window.location.href = backUrl;
+                    } else {
+                        window.history.back();
+                    }
+                });
+            }
+
+            // ---- AJAX CHAT MESSAGE SUBMIT (NO RELOAD) ----
+            (function attachChatAjax() {
+                const chatForm = document.getElementById("chatForm");
+                if (!chatForm) return;
+
+                // prevent duplicate binding
+                if (chatForm.dataset.ajaxBound === "true") return;
+                chatForm.dataset.ajaxBound = "true";
+
+                chatForm.addEventListener("submit", async function (e) {
+                    e.preventDefault();
+
+                    const formData = new FormData(chatForm);
+                    const action = chatForm.getAttribute("action");
+
+                    try {
+                        const res = await fetch(action, {
+                            method: "POST",
+                            headers: { "X-Requested-With": "XMLHttpRequest" },
+                            body: formData
+                        });
+
+                        const data = await res.json();
+                        if (!data.ok) {
+                            console.warn("Chat send failed:", data.error);
+                            return;
+                        }
+
+                        // clear text area
+                        const textarea = chatForm.querySelector("textarea[name='message']");
+                        if (textarea) {
+                            textarea.value = "";
+                            textarea.focus();
+                        }
+
+                        // reload messages
+                        if (typeof loadMessages === "function") {
+                            const wrapper = document.getElementById("chatWrapper");
+                            if (wrapper) {
+                                const ct = wrapper.getAttribute("data-chat-type");
+                                const id = wrapper.getAttribute("data-chat-id");
+                                const partner = wrapper.getAttribute("data-partner-id");
+                                loadMessages(ct, id, partner);
+                            }
+                        }
+                    } catch (err) {
+                        console.error("Send message error:", err);
+                    }
+                });
+            })();
+
+            // when navigating away, stop polling
+            window.addEventListener('beforeunload', function () {
+                stopPolling();
+            });
+
+        })();
+        // Close chat overlay and go back to saved URL
+        document.addEventListener("click", function (e) {
+            const closeBtn = e.target.closest("#chatCloseBtn");
+            if (!closeBtn) return;
+
+            const overlay = document.getElementById("chatOverlay");
+            if (overlay) overlay.classList.remove("open");
+
+            const savedURL = sessionStorage.getItem("chatReturnURL");
+
+            if (savedURL) {
+                window.location.href = savedURL;
+            } else {
+                // fallback
+                window.history.back();
+            }
+        });
+
+        document.addEventListener("click", function (e) {
+            const btn = e.target.closest("#openChatBtn");
+            if (btn) {
+                const returnUrl = btn.getAttribute("data-return-url") || window.location.href;
+                sessionStorage.setItem("chatReturnURL", returnUrl);
+            }
+        });
+
+    </script>
 </body>
 
 </html>

@@ -5,19 +5,19 @@
 
 <div class="product-detail-flex">
 
-    
     <div class="left-section">
-        <img src="{{ url_for('static', filename='uploads/' ~ item.image) }}" alt="{{ item.name }}" class="product-main-image">
+        <img src="{{ url_for('static', filename='uploads/' ~ item.image) }}" alt="{{ item.name }}"
+            class="product-main-image">
     </div>
 
-    
     <div class="right-section">
 
         {% if session['user_id'] == item.user_id or session['role'] == 'admin' %}
-
         <div class="edit-delete-buttons">
+            {% if item.status != 'sold' %}
             <a href="{{ url_for('mark_sold', item_id=item.id) }}" class="sold-btn"
                 onclick="return confirm('Mark this item as sold?');">✔ Sold Out</a>
+            {% endif %}
 
             <a href="{{ url_for('edit_product', item_id=item.id) }}" class="edit-btn">✏️ Edit</a>
             <a href="{{ url_for('delete_product', item_id=item.id) }}" class="delete-btn"
@@ -25,21 +25,24 @@
         </div>
         {% endif %}
 
-        
         <h4 class="product-title-heading">Product Name</h4>
         <h1 class="product-title">{{ item.name }}</h1>
 
-        
         <h4 class="product-title-heading">Price</h4>
         <p class="product-price-large">₹{{ item.price }}</p>
 
-        
+        <button id="openChatBtn"
+            data-chat-url="{{ url_for('chat_page', chat_type='buy', item_id=item.id) }}"
+            data-return-url="{{ request.path }}"
+            class="chat-open-main-btn">
+            <i class="fa-solid fa-comment"></i> Chat
+        </button>
+
         <div class="info-card">
             <h4 class="product-title-heading">Description</h4>
             <p class="info-text">{{ item.description }}</p>
         </div>
 
-        
         <div class="info-card">
             <h4 class="product-title-heading">Seller Information</h4>
 
@@ -52,9 +55,77 @@
                 <p><strong>Posted On:</strong> {{ item.created_at }}</p>
             </div>
         </div>
-
     </div>
+</div>
 
+<div id="chatOverlay" class="chat-overlay {% if chat_open %}open{% endif %}">
+    <div class="chat-modal">
+
+        <button type="button" class="chat-close-btn" id="chatCloseBtn">&times;</button>
+
+        <div class="chat-header">
+            <div class="chat-item-title">
+                {{ item.name if chat_type == "buy" else item.item }}
+            </div>
+            {% if current_chat_partner %}
+            <div class="chat-partner-name">
+                @{{ current_chat_partner.username }}
+            </div>
+            {% endif %}
+        </div>
+
+        <div class="chat-body-wrapper"
+             id="chatWrapper"
+             data-chat-type="{{ chat_type }}"
+             data-chat-id="{{ item.id }}"
+             data-partner-id="{% if current_chat_partner %}{{ current_chat_partner.id }}{% endif %}">
+
+            {% if chat_buyers and session['user_id'] == item.user_id %}
+            <div class="chat-sidebar">
+                <div class="chat-sidebar-title">Conversations</div>
+                {% for buyer in chat_buyers %}
+                <a href="{{ url_for('chat_page', chat_type=chat_type, item_id=item.id, chat_with=buyer.id) }}"
+                   class="chat-sidebar-user {% if current_chat_partner and buyer.id == current_chat_partner.id %}active{% endif %}">
+                    <span class="chat-avatar-circle">{{ buyer.username[0]|upper }}</span>
+                    <span class="chat-sidebar-username">{{ buyer.username }}</span>
+                </a>
+                {% endfor %}
+            </div>
+            {% endif %}
+
+            <div class="chat-main">
+                <div class="chat-messages" id="chatMessages">
+                    {% for m in chat_messages %}
+                    <div class="chat-message-row {% if m.sender_id == session['user_id'] %}from-me{% else %}from-them{% endif %}">
+                        <div class="chat-bubble">
+                            <div class="chat-bubble-text">{{ m.message }}</div>
+                            <div class="chat-bubble-meta">{{ m.created_at }}</div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+
+                <form id="chatForm"
+                      class="chat-input-form"
+                      method="post"
+                      action="{{ url_for('send_chat_message', chat_type=chat_type, item_id=item.id) }}">
+                    {% if current_chat_partner %}
+                    <input type="hidden" name="other_user_id" value="{{ current_chat_partner.id }}">
+                    {% endif %}
+                    <textarea name="message"
+                              rows="1"
+                              placeholder="Type your message..."
+                              class="chat-message-input"
+                              required></textarea>
+                    <button type="submit" class="chat-send-btn">
+                        <i class="fa-solid fa-paper-plane"></i>
+                    </button>
+                </form>
+
+            </div>
+
+        </div>
+    </div>
 </div>
 
 {% endblock %}
