@@ -43,6 +43,21 @@
         <h4 class="product-title-heading">Price</h4>
         <p class="product-price-large">₹{{ item.price }}</p>
 
+        <!-- {% if market_price %}
+        <div class="info-card" style="margin-top:10px; background:#e8f5e9;">
+            <h4 class="product-title-heading">Market Price (Google)</h4>
+            <p class="info-text" style="font-size:18px; font-weight:bold; color:#2e7d32;">
+                ₹{{ market_price }}
+            </p>
+        </div>
+        {% else %}
+        <div class="info-card" style="margin-top:10px; background:#ffebee;">
+            <h4 class="product-title-heading">Market Price</h4>
+            <p class="info-text" style="color:#c62828;">Not Found</p>
+        </div>
+        {% endif %} -->
+
+
         <!-- BUY BUTTON (ONLY FOR BUYERS) -->
         {% if item.status == 'available'
               and 'user_id' in session
