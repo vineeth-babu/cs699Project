@@ -1,36 +1,67 @@
 #  IITBay: Buy, Sell and Find @ IITB  
 
-**IITBay** is a student-driven web application built using **Flask** to simplify campus life at **IIT Bombay**.  
-It allows students to:  
--  Buy and sell used items within the campus  
--  Report and recover lost belongings through the **Lost & Found** section  
--  Encourage reuse, save money, and build community  
-
----
+**GitHub Repository:** [https://github.com/vineeth-babu/cs699Project](https://github.com/vineeth-babu/cs699Project)
 
 ##  Team Details  
 
 **Team Name:** *Team Alpha*  
-###  Vineeth — Backend Developer
-- Built the complete **Flask backend**
-- Implemented all **routes** and logic
-- Designed **database setup (`iitbay.db`)**
-- Created **login/register system** and **session management**
+###  Vineeth 
+- Built the complete Flask backend
+- Implemented all routes and logic
+- Designed database setup (`iitbay.db`)
+- Created login/register system and session management
+- Integrated Razorpay payment system for secure transactions
 
 ---
 
-###  Harshith Matta — Frontend Designer
-- Designed **UI layout and overall styling (`style.css`)**
-- Implemented **responsive design**
-- Created **`product_detail.html`** and **`lostfound_detail.html`** pages
-- Improved **database column consistency** and naming
-
+###  Harshith Matta 
+- Designed UI layout and overall styling (`style.css`)
+- Implemented responsive design
+- Created `product_detail.html` and `lostfound_detail.html` pages
+- Implemented real-time chat system for user communication
+- Improved database column consistency and naming
+- Added notification system at app level and Gmail-based notifications using SSL and SMTP
 ---
 
-###  Jamala Mohan Sai Naik — UI & Form Integration
-- Created **`buy_sell.html`** and **`lost_found.html`** form pages
-- Handled **frontend–backend integration**
-- Tested **navigation**, **form submission**, and **data flow** across templates
+###  Jamala Mohan Sai Naik 
+- Created `buy_sell.html` and `lost_found.html` form pages
+- Handled frontend–backend integration
+- Tested navigation, form submission, and data flow across templates
+- Implemented notification display and ensured smooth user updates
+
+---
+## Code Structure
+
+CS699PROJECT/
+│
+├── static/
+│   ├── uploads/             # Folder where user-uploaded images are saved
+│   └── style.css            # CSS file that handles the design and colors
+│
+├── templates/
+│   ├── add_item.html        # Form to post a new item for sale
+│   ├── add_lost_item.html   # Form to report a lost or found object
+│   ├── base.html            # Master layout containing the header and menu
+│   ├── buy_sell.html        # Main page showing items available for sale
+│   ├── edit_lost_item.html  # Allows users to edit their lost/found reports
+│   ├── edit_product.html    # Allows sellers to update item details
+│   ├── home.html            # The welcome page users see first
+│   ├── login.html           # Form for users to sign in
+│   ├── lost_found.html      # Main page listing lost and found reports
+│   ├── lostfound_detail.html # Shows full info for a specific lost item report
+│   ├── pay.html             # The checkout page for making payments
+│   ├── product_detail.html  # Shows full info for a single item for sale
+│   ├── register.html        # Form for new users to create an account
+│   └── your_products.html   # Dashboard showing items the user posted
+│
+├── venv/                    # Virtual environment folder (contains libraries)
+├── .env                     # Stores secret keys and configuration settings
+├── .gitignore               # Tells Git which files to ignore (like venv or .env)
+├── app.py                   # Main code that runs the website and database
+├── iitbay.db                # Database file where user and item data is stored
+├── Presentation_Team_Alpha.pptx # Project presentation slides
+├── README.md                # This documentation file
+└── requirements.txt         # List of python libraries needed to run the app
 
 ##  Features  
 
@@ -41,31 +72,13 @@ It allows students to:
 -  **SQLite Database:** Persistent data storage (`iitbay.db`)  
 -  **Template Inheritance:** Clean modular structure using Jinja2  
 -  **Role System:** Default user role = `student` (extendable for admin later)
+-  **Razorpay Payment Integration** Secure online payments inside the platform
+-  **Real-Time Chat System** Enables communication between users
+-  **Notification System:** In-app alerts and Gmail notifications for important updates
 
 ---
 
-##  Project Structure  
 
-IITBay/
-│
-├── app.py # Flask backend (main application)
-├── iitbay.db # SQLite database file
-├── requirements.txt # Python dependencies
-├── static/
-│ └── style.css # Custom frontend styling
-│
-├── templates/
-│ ├── base.html
-│ ├── home.html
-│ ├── register.html
-│ ├── login.html
-│ ├── buy_sell.html
-│ ├── lost_found.html
-│ ├── product_detail.html
-│ ├── lostfound_detail.html
-│ └── test.html # Test page for verifying Flask setup
-│
-└── README.md # Project documentation
 
 ##  Setup Instructions
 
@@ -80,7 +93,6 @@ For Windows:
 python -m venv .venv
 .venv\Scripts\activate
 
-
 For macOS/Linux:
 
 python3 -m venv .venv
@@ -89,51 +101,19 @@ source .venv/bin/activate
 ### 3. Install Dependencies
 pip install -r requirements.txt
 
-
-Example requirements.txt:
-
-Flask==3.0.3
-
 ### 4. Run the Flask App
 python app.py
-
 
 If successful, you should see:
 
 Running on http://127.0.0.1:5001
 
-
 Open this address in your browser to view the app.
 
-## Testing Flask Setup
-
-Create a simple test file inside the templates folder named test.html:
-
-<h1>Hello Flask!</h1>
-<p>If you see this, Flask is working.</p>
-
-
-Then run:
-
-python app.py
-
-
-Visit http://127.0.0.1:5001/test to confirm Flask is running.
-
-## Future Enhancements
-
---Image upload functionality for items
-
---Search and filter system
-
---Analytics on popular items and campus activity
-
 ## Tech Stack
-
 Backend: Flask (Python)
-
 Database: SQLite3
-
 Frontend: HTML, CSS (custom), Jinja2 templates
-
+Chat system: SMTP,SSL
+payment system: Razorpay
 Version Control: Git & GitHub

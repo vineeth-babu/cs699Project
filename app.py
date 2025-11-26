@@ -5,10 +5,6 @@ import datetime
 import razorpay
 import smtplib
 import ssl
-import requests
-from bs4 import BeautifulSoup
-import json
-import re
 
 ADMIN_PASSKEY = "iitbayadmin123"
 
@@ -161,74 +157,6 @@ def send_email_notification(to_email, subject, body):
         print("Email sent successfully")
     except Exception as e:
         print("Email send failed:", e)
-
-# def get_market_price(product_name):
-#     import requests
-#     from bs4 import BeautifulSoup
-#     import re
-
-#     try:
-#         print(f"\n🔍 Searching pricehistory.app for: {product_name}")
-
-#         query = product_name.replace(" ", "%20")
-#         url = f"https://pricehistory.app/page/search#gsc.tab=0&gsc.q={query}"
-
-#         headers = {
-#             "User-Agent": (
-#                 "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
-#                 "AppleWebKit/537.36 (KHTML, like Gecko) "
-#                 "Chrome/120.0.0.0 Safari/537.36"
-#             )
-#         }
-
-#         res = requests.get(url, headers=headers, timeout=8)
-#         print("Status:", res.status_code)
-
-#         if res.status_code != 200:
-#             print("❌ Request failed")
-#             return None
-
-#         soup = BeautifulSoup(res.text, "html.parser")
-
-#         # Select Google CSE snippet blocks
-#         snippets = soup.select(".gs-snippet, .gs-bidi-start-align")
-
-#         if not snippets:
-#             print("❌ No snippet blocks found")
-#             return None
-
-#         # Join text for regex search
-#         combined = " ".join(s.get_text(" ", strip=True) for s in snippets)
-
-#         print("\n🔎 Combined Snippet Text:\n", combined[:300], "...\n")
-
-#         # Extract ₹ values
-#         prices = re.findall(r"₹\s?[\d,]+", combined)
-
-#         if not prices:
-#             print("❌ No price found")
-#             return None
-
-#         # FIRST price is "current price"
-#         price = prices[0].replace("₹", "").replace(",", "").strip()
-
-#         if price.isdigit():
-#             final_price = int(price)
-#             print("✔ Extracted Current Price:", final_price)
-#             return final_price
-
-#         print("❌ Extracted price invalid:", price)
-#         return None
-
-#     except Exception as e:
-#         print("❌ Exception:", e)
-#         return None
-
-
-
-
-
-
 
 @app.context_processor
 def inject_notification_info():
@@ -440,18 +368,12 @@ def product_detail(item_id):
     if item is None:
         return "Item not found.", 404
 
-    # # Get market price from Flipkart
-    # market_price = get_market_price(item["name"])
+    
 
     return render_template(
         "product_detail.html",
         item=item,
-        # market_price=market_price
     )
-
-
-
-
 
 
 @app.route("/product/<int:item_id>/edit", methods=["GET", "POST"])
@@ -1050,7 +972,7 @@ def create_order(item_id):
     if item is None:
         return "Item not found", 404
 
-    amount = int(float(item['price']) * 100)  # convert ₹ to paise
+    amount = int(float(item['price']) * 100) 
 
     razorpay_order = razorpay_client.order.create(dict(
         amount=amount,
@@ -1072,17 +994,11 @@ def payment_success():
 
     item_id = data.get("item_id")
 
-    # mark item as sold after payment
     db = get_db()
     db.execute("UPDATE buy_sell_items SET status='sold' WHERE id=?", (item_id,))
     db.commit()
 
     return {"message": "Payment successful! Item marked as sold."}
-
-
-
-
-
 
 if __name__ == '__main__':
     if not os.path.exists(DATABASE):

@@ -78,14 +78,14 @@
     </div>
 </div>
 
-<!-- CHAT OVERLAY -->
+
 <div id="chatOverlay" class="chat-overlay {% if chat_open %}open{% endif %}">
     <div class="chat-modal">
 
-        <!-- CLOSE BUTTON -->
+
         <button type="button" class="chat-close-btn" id="chatCloseBtn">&times;</button>
 
-        <!-- HEADER -->
+
         <div class="chat-header">
             <div class="chat-item-title">
                 {{ item.name if chat_type == "buy" else item.item }}

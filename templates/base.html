@@ -10,7 +10,6 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
 
-    <!-- Font Awesome for icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
         crossorigin="anonymous" referrerpolicy="no-referrer" />
 
@@ -39,7 +38,6 @@
                 </nav>
 
                 {% if 'user_id' in session %}
-                <!-- Notification bell + dropdown -->
                 <div class="notif-container">
                     <button type="button" class="notif-bell-btn" id="notifBellBtn" aria-label="Notifications">
                         <i class="fa-solid fa-bell"></i>
@@ -96,7 +94,7 @@
                 const data = await res.json();
                 if (!data || !data.success) return;
 
-                // badge
+
                 const badge = document.getElementById("notif-count");
                 if (badge) {
                     if (data.count > 0) {
@@ -107,7 +105,6 @@
                     }
                 }
 
-                // new label
                 const newLabel = document.getElementById("notifNewLabel");
                 if (newLabel) {
                     if (data.count > 0) {
@@ -118,8 +115,6 @@
                         newLabel.style.display = "none";
                     }
                 }
-
-                // list
                 const list = document.getElementById("notif-list");
                 if (list) {
                     list.innerHTML = "";
@@ -163,12 +158,10 @@
             }
         }
 
-        // Polling settings
-        const NOTIF_POLL_INTERVAL = 3000; // ms
+        const NOTIF_POLL_INTERVAL = 3000; 
         let notifPollHandle = null;
 
         function startNotifPolling() {
-            // avoid multiple intervals
             if (notifPollHandle) return;
             fetchNotifications();
             notifPollHandle = setInterval(fetchNotifications, NOTIF_POLL_INTERVAL);
@@ -181,9 +174,7 @@
             }
         }
 
-        // start polling when page loads
         document.addEventListener("DOMContentLoaded", function () {
-            // only start if notif elements exist (user logged in)
             if (document.getElementById("notifBellBtn")) {
                 startNotifPolling();
             }
@@ -202,7 +193,6 @@
                 dropdown.classList.toggle("open");
             });
 
-            // close on outside click
             document.addEventListener("click", function () {
                 dropdown.classList.remove("open");
             });
@@ -292,7 +282,6 @@
                         messagesContainer.appendChild(row);
                     });
 
-                    // scroll to bottom
                     messagesContainer.scrollTop = messagesContainer.scrollHeight;
                 } catch (err) {
                     console.warn("loadMessages error:", err);
@@ -309,7 +298,6 @@
 
                 if (!chatType || !itemId || !partnerId) return;
 
-                // initial load
                 loadMessages(chatType, itemId, partnerId);
 
                 pollingInterval = setInterval(function () {
@@ -369,12 +357,9 @@
                 });
             }
 
-            // ---- AJAX CHAT MESSAGE SUBMIT (NO RELOAD) ----
             (function attachChatAjax() {
                 const chatForm = document.getElementById("chatForm");
                 if (!chatForm) return;
-
-                // prevent duplicate binding
                 if (chatForm.dataset.ajaxBound === "true") return;
                 chatForm.dataset.ajaxBound = "true";
 
@@ -397,14 +382,11 @@
                             return;
                         }
 
-                        // clear text area
                         const textarea = chatForm.querySelector("textarea[name='message']");
                         if (textarea) {
                             textarea.value = "";
                             textarea.focus();
                         }
-
-                        // reload messages
                         if (typeof loadMessages === "function") {
                             const wrapper = document.getElementById("chatWrapper");
                             if (wrapper) {
@@ -420,13 +402,12 @@
                 });
             })();
 
-            // when navigating away, stop polling
             window.addEventListener('beforeunload', function () {
                 stopPolling();
             });
 
         })();
-        // Close chat overlay and go back to saved URL
+
         document.addEventListener("click", function (e) {
             const closeBtn = e.target.closest("#chatCloseBtn");
             if (!closeBtn) return;
@@ -439,7 +420,7 @@
             if (savedURL) {
                 window.location.href = savedURL;
             } else {
-                // fallback
+
                 window.history.back();
             }
         });

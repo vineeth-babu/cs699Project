@@ -408,8 +408,6 @@ form input[type="submit"]:hover {
     }
 }
 
-/* ----------------- Notifications (Header dropdown) ----------------- */
-
 .notif-container {
     position: relative;
     display: flex;
@@ -568,7 +566,6 @@ form input[type="submit"]:hover {
     box-shadow: 0 2px 6px rgba(0,0,0,0.06);
 }
 
-/* ----------------- Chat overlay (Messenger-like) ----------------- */
 
 .product-image-wrapper {
     position: relative;
@@ -600,7 +597,7 @@ form input[type="submit"]:hover {
     background: #357abd;
 }
 
-/* Fullscreen overlay */
+
 .chat-overlay {
     position: fixed;
     inset: 0;
@@ -665,14 +662,14 @@ form input[type="submit"]:hover {
     opacity: 0.9;
 }
 
-/* Body layout */
+
 .chat-body-wrapper {
     display: flex;
     flex: 1;
     min-height: 250px;
 }
 
-/* Sidebar for seller */
+
 .chat-sidebar {
     width: 220px;
     background: #e9edf7;
@@ -730,7 +727,6 @@ form input[type="submit"]:hover {
     text-overflow: ellipsis;
 }
 
-/* Main chat area */
 .chat-main {
     flex: 1;
     display: flex;
@@ -792,7 +788,6 @@ form input[type="submit"]:hover {
     text-align: right;
 }
 
-/* Input row */
 .chat-input-form {
     display: flex;
     align-items: center;
@@ -914,14 +909,12 @@ form input[type="submit"]:hover {
     color: #ffffff;
 }
 
-/* Header right group */
+
 .header-right {
     display: flex;
     align-items: center;
     gap: 18px;
 }
-
-/* ----------------- Notifications (Header dropdown) ----------------- */
 
 .notif-container {
     position: relative;
