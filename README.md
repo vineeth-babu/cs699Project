@@ -71,7 +71,7 @@ CS699PROJECT/
 -  **Dynamic Detail Pages:** Individual item pages for detailed view  
 -  **SQLite Database:** Persistent data storage (`iitbay.db`)  
 -  **Template Inheritance:** Clean modular structure using Jinja2  
--  **Role System:** Default user role = `student` (extendable for admin later)
+-  **Role System:** Default user role = `student` (extendable for admin too using passkey)
 -  **Razorpay Payment Integration** Secure online payments inside the platform
 -  **Real-Time Chat System** Enables communication between users
 -  **Notification System:** In-app alerts and Gmail notifications for important updates
